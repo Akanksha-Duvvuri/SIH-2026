@@ -1,14 +1,35 @@
 import Link from "next/link";
+import { API_URL } from "@/lib/api";
 
-const categories = [
-  ["Web Development", "React, Next.js, Node.js"],
-  ["AI / ML", "Python, LLMs, computer vision"],
-  ["Cybersecurity", "AppSec, audits, infrastructure"],
-  ["Data", "Analytics, ETL, SQL"],
-  ["Design", "UI/UX, product, branding"]
+type Analytics = {
+  categories: { category: string; jobs: number; avgBudget: number }[];
+};
+
+async function getCategories(): Promise<{ category: string; subtitle: string }[]> {
+  try {
+    const res = await fetch(`${API_URL}/analytics/marketplace`, { next: { revalidate: 60 } });
+    if (!res.ok) return fallbackCategories;
+    const data: Analytics = await res.json();
+    return data.categories.map((c) => ({
+      category: c.category,
+      subtitle: `${c.jobs} opportunities · avg ₹${c.avgBudget.toLocaleString("en-IN")}`
+    }));
+  } catch {
+    return fallbackCategories;
+  }
+}
+
+const fallbackCategories = [
+  { category: "Web Development", subtitle: "React, Next.js, Node.js" },
+  { category: "AI / ML", subtitle: "Python, LLMs, computer vision" },
+  { category: "Cybersecurity", subtitle: "AppSec, audits, infrastructure" },
+  { category: "Data", subtitle: "Analytics, ETL, SQL" },
+  { category: "Design", subtitle: "UI/UX, product, branding" }
 ];
 
-export default function Home() {
+export default async function Home() {
+  const categories = await getCategories();
+
   return (
     <main className="min-h-screen bg-[#0a0a0b] text-white">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
@@ -33,7 +54,7 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-6 py-16">
           <p className="text-xs uppercase tracking-[0.18em] text-white/25">Explore the marketplace</p>
           <div className="mt-6 grid gap-3 md:grid-cols-2 lg:grid-cols-5">
-            {categories.map(([a,b]) => <Link key={a} href="/jobs" className="rounded-2xl border border-white/[0.07] p-5 hover:bg-white/[0.04]"><h3 className="font-medium">{a}</h3><p className="mt-2 text-xs leading-5 text-white/30">{b}</p></Link>)}
+            {categories.map((c) => <Link key={c.category} href="/jobs" className="rounded-2xl border border-white/[0.07] p-5 hover:bg-white/[0.04]"><h3 className="font-medium">{c.category}</h3><p className="mt-2 text-xs leading-5 text-white/30">{c.subtitle}</p></Link>)}
           </div>
         </div>
       </section>

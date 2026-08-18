@@ -1,8 +1,23 @@
 import { Router } from "express";
 import { getFreelancer, getFreelancers, getMyProfile, updateMyProfile } from "../controllers/profileController.js";
+import { getFreelancerDashboard } from "../controllers/freelancerController.js";
 import { requireAuth } from "../middleware/auth.js";
 
 const router = Router();
+
+/**
+ * @openapi
+ * /api/profile/dashboard:
+ *   get:
+ *     summary: Get freelancer dashboard data (stats, recommended jobs)
+ *     tags: [Profile]
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: Freelancer dashboard data
+ */
+router.get("/dashboard", requireAuth, getFreelancerDashboard);
 
 /**
  * @openapi
