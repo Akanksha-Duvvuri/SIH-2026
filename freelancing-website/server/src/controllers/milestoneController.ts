@@ -15,8 +15,9 @@ async function getAuthorizedProject(id: string, userId: string) {
 
 export async function listMilestones(req: AuthRequest, res: Response) {
   if (!req.user) return res.status(401).json({ message: "Authentication required." });
-  if (!mongoose.isValidObjectId(req.params.projectId)) return res.status(400).json({ message: "Invalid project ID." });
-  const project = await getAuthorizedProject(req.params.projectId, req.user.id);
+  const projectId = String(req.params.projectId);
+  if (!mongoose.isValidObjectId(projectId)) return res.status(400).json({ message: "Invalid project ID." });
+  const project = await getAuthorizedProject(projectId, req.user.id);
   if (!project) return res.status(404).json({ message: "Project not found." });
   const milestones = await Milestone.find({ projectId: project._id }).sort({ createdAt: 1 });
   const transactions = await Transaction.find({ projectId: project._id }).sort({ createdAt: -1 });
@@ -25,7 +26,8 @@ export async function listMilestones(req: AuthRequest, res: Response) {
 
 export async function createMilestone(req: AuthRequest, res: Response) {
   if (!req.user || req.user.role !== "employer") return res.status(403).json({ message: "Only employers can create milestones." });
-  const project = await getAuthorizedProject(req.params.projectId, req.user.id);
+  const projectId = String(req.params.projectId);
+  const project = await getAuthorizedProject(projectId, req.user.id);
   if (!project) return res.status(404).json({ message: "Project not found." });
   const { title, description, amount, dueDate } = req.body;
   if (!title?.trim() || !description?.trim() || Number(amount) <= 0) return res.status(400).json({ message: "Title, description and valid amount are required." });
