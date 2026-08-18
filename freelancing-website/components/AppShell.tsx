@@ -9,8 +9,12 @@ const links = [
   { href: "/dashboard", label: "Dashboard", icon: "⌂" },
   { href: "/jobs", label: "Find work", icon: "⌕" },
   { href: "/freelancers", label: "Talent", icon: "◎" },
+  { href: "/analytics", label: "Analytics", icon: "↗" },
+  { href: "/applications", label: "Applications", icon: "▣" },
   { href: "/projects", label: "Projects", icon: "□" },
-  { href: "/analytics", label: "Analytics", icon: "↗" }
+  { href: "/profile", label: "Profile", icon: "◎" },
+  { href: "/notifications", label: "Notifications", icon: "♢" },
+  { href: "/messages", label: "Messages", icon: "○" }
 ];
 
 export default function AppShell({ children }: { children: React.ReactNode }) {

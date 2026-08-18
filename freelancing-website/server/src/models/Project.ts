@@ -1,0 +1,5 @@
+import mongoose, { Document, Schema } from "mongoose";
+export type ProjectStatus="created"|"in-progress"|"completed"|"cancelled";
+export interface IProject extends Document { jobId:mongoose.Types.ObjectId; employerId:mongoose.Types.ObjectId; freelancerId:mongoose.Types.ObjectId; totalAmount:number; status:ProjectStatus; escrowStatus:"not-funded"|"funded"|"partially-released"|"released"; startDate?:Date; endDate?:Date; createdAt:Date; updatedAt:Date; }
+const schema=new Schema<IProject>({jobId:{type:Schema.Types.ObjectId,ref:"Job",required:true,unique:true},employerId:{type:Schema.Types.ObjectId,ref:"User",required:true,index:true},freelancerId:{type:Schema.Types.ObjectId,ref:"User",required:true,index:true},totalAmount:{type:Number,required:true,min:0},status:{type:String,enum:["created","in-progress","completed","cancelled"],default:"created"},escrowStatus:{type:String,enum:["not-funded","funded","partially-released","released"],default:"not-funded"},startDate:Date,endDate:Date},{timestamps:true});
+export const Project=mongoose.model<IProject>("Project",schema);

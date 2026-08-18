@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
 import { User } from "./models/User.js";
 import { Job } from "./models/Job.js";
+import { Application } from "./models/Application.js";
+import { Portfolio } from "./models/Portfolio.js";
 
 const jobs = [
   {
@@ -125,7 +127,28 @@ const jobs = [
 export async function seedDatabase() {
   const count = await Job.countDocuments();
 
-  if (count > 0) return;
+  if (count > 0) {
+    const freelancer = await User.findOne({ email: "freelancer@demo.local" });
+    const employer = await User.findOne({ email: "employer@demo.local" });
+    if (freelancer && employer) {
+      const firstJobs = await Job.find({ employerId: employer._id }).limit(3);
+      for (const job of firstJobs) {
+        const existing = await Application.findOne({ jobId: job._id, freelancerId: freelancer._id });
+        if (!existing) {
+          await Application.create({ jobId: job._id, freelancerId: freelancer._id, proposal: "I can deliver this project with a clean, production-ready implementation and clear communication.", bidAmount: Math.round((job.budgetMin + job.budgetMax) / 2), status: "submitted" });
+          await Job.findByIdAndUpdate(job._id, { $inc: { applications: 1 } });
+        }
+      }
+      const portfolioCount = await Portfolio.countDocuments({ freelancerId: freelancer._id });
+      if (!portfolioCount) {
+        await Portfolio.insertMany([
+          { freelancerId: freelancer._id, title: "Full-stack Commerce Platform", description: "Next.js commerce platform with payments, admin tools and a MongoDB backend.", link: "https://example.com", skills: ["Next.js", "Node.js", "MongoDB", "Payments"] },
+          { freelancerId: freelancer._id, title: "AI Study Assistant", description: "AI-powered study workflow with a React interface and API integrations.", skills: ["React", "Python", "AI/ML"] }
+        ]);
+      }
+    }
+    return;
+  }
 
   const password = await bcrypt.hash("DemoPass123!", 12);
 
@@ -149,7 +172,9 @@ export async function seedDatabase() {
     skills: ["React", "Next.js", "TypeScript", "Node.js", "MongoDB"],
     languages: ["English", "Hindi", "Telugu"],
     rating: 4.9,
-    completedProjects: 18
+    completedProjects: 18,
+    hourlyRate: 1200,
+    availability: "20 hrs/week"
   });
 
   await Job.insertMany(

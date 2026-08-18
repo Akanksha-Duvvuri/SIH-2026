@@ -13,6 +13,8 @@ export interface IUser extends Document {
   skills: string[];
   languages: string[];
   avatar?: string;
+  hourlyRate?: number;
+  availability?: string;
   rating: number;
   completedProjects: number;
   createdAt: Date;
@@ -31,6 +33,8 @@ const userSchema = new Schema<IUser>(
     skills: { type: [String], default: [] },
     languages: { type: [String], default: ["English"] },
     avatar: String,
+    hourlyRate: { type: Number, min: 0 },
+    availability: { type: String, default: "Available" },
     rating: { type: Number, default: 0 },
     completedProjects: { type: Number, default: 0 }
   },

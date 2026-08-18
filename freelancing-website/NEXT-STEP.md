@@ -1,78 +1,27 @@
-# Milestone 2
+# Part 2 — Profiles + Portfolio + Hiring
 
-This archive adds:
+Adds real MongoDB-backed freelancer profiles, portfolio CRUD, public talent profiles, freelancer search, projects, and automatic project creation when an employer accepts an application.
 
-- Real Express + MongoDB backend
-- JWT authentication stored in an httpOnly cookie
-- Registration
-- Login
-- Logout
-- Protected `/api/auth/me`
-- Job model and searchable job API
-- Seed data
-- Job marketplace with search and filters
-- Job detail pages
-- Freelancer discovery with search/filter
-- Projects + milestone/escrow UI
-- Analytics UI
-- Web development, AI/ML, cybersecurity, data, backend and design job categories
-
-## Install backend
-
+Extract over the current project:
 ```bash
-cd server
-npm install
-cp .env.example .env
-```
-
-Edit `server/.env` and add your MongoDB Atlas connection string and a long JWT secret.
-
-Then:
-
-```bash
-npm run dev
+cd ~/Desktop/CSE/Projects/SIH-2026/freelancing-website
+tar -xzf ~/Downloads/freelancing-platform-part-2-profiles-hiring.tar.gz --strip-components=1
 ```
 
 Backend:
-`http://localhost:5000`
-
-## Frontend
-
-In the project root:
-
 ```bash
+cd server
+npm install
 npm run dev
 ```
-
-If Turbopack causes high CPU on your machine, use:
-
+Frontend (second terminal):
 ```bash
+cd ~/Desktop/CSE/Projects/SIH-2026/freelancing-website
 npx next dev --webpack
 ```
 
-Frontend:
-`http://localhost:3000`
+Test freelancer: `/profile` → edit profile → add portfolio → `/freelancers` → open public profile.
 
-## Demo accounts
+Test employer: sign in with `employer@demo.local` / `DemoPass123!` → `/dashboard` → accept an application → `/projects`.
 
-The server seeds these automatically on the first empty database:
-
-```text
-freelancer@demo.local
-DemoPass123!
-
-employer@demo.local
-DemoPass123!
-```
-
-## Important
-
-The frontend no longer uses localStorage as authentication. Login/register now go through Express and MongoDB, and the server issues an httpOnly JWT cookie.
-
-The job list is database-backed. The freelancer directory, project details and analytics currently use rich demo data so the UI is complete; these will be connected to MongoDB in the next backend pass.
-
-## MongoDB recommendation
-
-Use MongoDB Atlas for this project. It matches the MERN architecture and makes Mongoose queries/search/filtering straightforward.
-
-Do not store portfolio images or large files directly inside MongoDB. Store files in object storage such as Cloudinary and save only URLs/metadata in MongoDB.
+AI is deliberately excluded.
